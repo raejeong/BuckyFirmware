@@ -40,5 +40,10 @@ float PID::getCmd(float ref, float meas)
     cmd = min(max(cmd, min_), max_);
     lastErr_ = err;
     lastTime_ = curTime;
+    if(abs(ref) < 0.05)
+    {
+        cmd = 0.0;
+        integralErr_ = 0.0;
+    }
     return cmd;
 }

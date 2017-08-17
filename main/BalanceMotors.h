@@ -30,7 +30,7 @@ private:
 
 public:
 	Adafruit_MotorShield AFMS;
-	Adafruit_DCMotor *motor_1, *motor_2;
+	Adafruit_DCMotor *motor_1, *motor_2, *motor_3, *motor_4;
 	BalanceMotors();
 	~BalanceMotors();
 	void run_motors(float motor_1_speed_ref, float motor_2_speed_ref, float motor_1_speed, float motor_2_speed);

@@ -62,10 +62,11 @@ void read_data()
 		int commaIndex = data_string.indexOf(',');
 		int secondCommaIndex = data_string.indexOf(',', commaIndex + 1);
 		int thirdCommaIndex = data_string.indexOf(',', secondCommaIndex + 1);
+		int fourthCommaIndex = data_string.indexOf(',', thirdCommaIndex + 1);
 		String firstValue = data_string.substring(0, commaIndex);
 		String secondValue = data_string.substring(commaIndex + 1, secondCommaIndex);
 		String thirdValue = data_string.substring(secondCommaIndex + 1, thirdCommaIndex);
-		String fourthValue = data_string.substring(thirdCommaIndex + 1);
+		String fourthValue = data_string.substring(thirdCommaIndex + 1, fourthCommaIndex);
 		int data_flag = firstValue.toInt();
 		int data_0 = secondValue.toInt();
 		float data_1 = thirdValue.toFloat();
@@ -82,7 +83,7 @@ void read_data()
 			data_confirm += commands[1];
 			data_confirm += ",";
 			data_confirm += commands[2];
-			send_info(data_confirm);
+			// send_info(data_confirm);
 		}
 		else
 		{
@@ -104,7 +105,7 @@ void setup()
 {
 	bool success;
 	robot_motors.AFMS.begin();
-	Serial.begin(9600);
+	Serial.begin(115200);
 	send_info("INFO: Serial started");
 	success = robot_imu.initialize_imu();
 	while(!success)
@@ -128,7 +129,7 @@ void setup()
 		calibration_string += calibration_info[3];
 		send_info(calibration_string);
 		delay(1000);
-		success = true;
+		// success = true;
 	}while(!success);
 	calibration_string = "ERROR: IMU calibrated. system: ";
 	calibration_string += calibration_info[0];
