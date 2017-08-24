@@ -5,22 +5,23 @@
 #include "Adafruit_MS_PWMServoDriver.h"
 #include "digitalWriteFast.h"
 #include "PID.h"
+#include "PinDefines.h"
 
 // 
 // Conversion factors from ticks to linear velocity.
-#define TICKS_PER_REVOLUTION (12.0f * 47.0f)
+#define TICKS_PER_REVOLUTION (12.0f)
 #define TO_OMEGA(ticks) ((ticks) / TICKS_PER_REVOLUTION * 2.0f * M_PI)
 
-#define K_P_1 10.0f
-#define K_I_1 20.0f
+#define K_P_1 0.7f
+#define K_I_1 0.4f
 #define K_D_1 0.3f
 
-#define K_P_2 10.0f
-#define K_I_2 20.0f
+#define K_P_2 0.7f
+#define K_I_2 0.4f
 #define K_D_2 0.3f
 
-#define MAX_SPEED 255
-#define MIN_SPEED -255
+#define MAX_SPEED 250
+#define MIN_SPEED -250
 
 class BalanceMotors
 {

@@ -15,30 +15,46 @@ BalanceMotors::~BalanceMotors()
 {
 }
 
-void BalanceMotors::run_motors(float motor_1_speed_ref, float motor_2_speed_ref, float motor_1_speed, float motor_2_speed)
+void BalanceMotors::run_motors(float motor_1_speed_ref, float motor_2_speed_ref, float motor_1_measure, float motor_2_measure)
 {
-	float motor_1_command = motor_1_control.getCmd(motor_1_speed_ref, motor_1_speed);
-	float motor_2_command = motor_2_control.getCmd(motor_2_speed_ref, motor_2_speed);
+	float motor_1_command = motor_1_control.getCmd(motor_1_speed_ref, motor_1_measure);
+	float motor_2_command = motor_2_control.getCmd(motor_2_speed_ref, motor_2_measure);
+    // float motor_1_command = motor_1_speed_ref;
+    // float motor_2_command = motor_2_speed_ref;
 
     if (motor_1_command < 0) {
-        motor_1->run(BACKWARD);
-        motor_3->run(BACKWARD);
+        digitalWrite(PIN::motor1DIR,HIGH);
+        // motor_1->run(BACKWARD);
+        // motor_3->run(BACKWARD);
     }
     else {
-        motor_1->run(FORWARD);
-        motor_3->run(FORWARD);
+        digitalWrite(PIN::motor1DIR,LOW);
+        // motor_1->run(FORWARD);
+        // motor_3->run(FORWARD);
     }
     if (motor_2_command < 0) {
-        motor_2->run(BACKWARD);
-        motor_4->run(BACKWARD);
+        digitalWrite(PIN::motor2DIR,LOW);
+        // motor_2->run(BACKWARD);
+        // motor_4->run(BACKWARD);
 
     }
     else {
-        motor_2->run(FORWARD);
-        motor_4->run(FORWARD);
+        digitalWrite(PIN::motor2DIR,HIGH);
+        // motor_2->run(FORWARD);
+        // motor_4->run(FORWARD);
     }
-    motor_1->setSpeed(abs(motor_1_command));
-    motor_2->setSpeed(abs(motor_2_command));
-    motor_3->setSpeed(abs(motor_1_command));
-    motor_4->setSpeed(abs(motor_2_command));
+    motor_1_command = abs(motor_1_command);
+    motor_2_command = abs(motor_2_command);
+    if (motor_1_command < 20 && !(motor_1_command == 0)) {
+        motor_1_command += 20;
+    }
+    if (motor_2_command < 20 && !(motor_2_command == 0)) {
+        motor_2_command += 20;
+    }
+    analogWrite(PIN::motor1PWM, abs(motor_1_command));
+    analogWrite(PIN::motor2PWM, abs(motor_2_command));
+    // motor_1->setSpeed(abs(motor_1_command));
+    // motor_2->setSpeed(abs(motor_2_command));
+    // motor_3->setSpeed(abs(motor_1_command));
+    // motor_4->setSpeed(abs(motor_2_command));
 }

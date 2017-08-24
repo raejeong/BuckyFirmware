@@ -34,13 +34,15 @@ bool IMU::calibrate_imu(int (&calibration_info)[4])
     calibration_info[2] = accel;
     calibration_info[3] = mag;
 
+    // success = gyro==3;
     success = system==3 and gyro==3 and accel==3 and mag==3;
+
     return success;
 }
 
 void IMU::get_imu_data(float (&robot_data)[9])
 {
-  imu::Vector<3> acceleration = bno.getVector(Adafruit_BNO055::VECTOR_ACCELEROMETER);
+  imu::Vector<3> acceleration = bno.getVector(Adafruit_BNO055::VECTOR_GYROSCOPE);
   imu::Quaternion quaternion = bno.getQuat();
   robot_data[0] = acceleration.x();
   robot_data[1] = acceleration.y();

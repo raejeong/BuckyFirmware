@@ -12,7 +12,11 @@ enum PIN: byte
 	rightEncoderInterruptPin =  18, // A side of encoder
 	rightEncoderPinB =  16,
 	// Jumping solenoid pin
-	jumpPin = 7
+	jumpPin = 7,
+	motor1PWM = 3,
+	motor2PWM = 4,
+	motor1DIR = 5,
+	motor2DIR = 6
 };
 
 #endif

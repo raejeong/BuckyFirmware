@@ -6,7 +6,7 @@
 volatile int32_t gLeftEncoderTicks = 0;
 volatile int32_t gRightEncoderTicks = 0;
 
-// #define LeftEncoderIsReversed
+#define LeftEncoderIsReversed
 #define RightEncoderIsReversed
 
 void HandleLeftMotorInterruptA()
