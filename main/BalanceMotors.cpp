@@ -23,12 +23,12 @@ void BalanceMotors::run_motors(float motor_1_speed_ref, float motor_2_speed_ref,
     // float motor_2_command = motor_2_speed_ref;
 
     if (motor_1_command < 0) {
-        digitalWrite(PIN::motor1DIR,HIGH);
+        digitalWrite(PIN::motor1DIR,LOW);
         // motor_1->run(BACKWARD);
         // motor_3->run(BACKWARD);
     }
     else {
-        digitalWrite(PIN::motor1DIR,LOW);
+        digitalWrite(PIN::motor1DIR,HIGH);
         // motor_1->run(FORWARD);
         // motor_3->run(FORWARD);
     }
@@ -51,6 +51,7 @@ void BalanceMotors::run_motors(float motor_1_speed_ref, float motor_2_speed_ref,
     if (motor_2_command < 20 && !(motor_2_command == 0)) {
         motor_2_command += 20;
     }
+    // Serial.println(motor_1_command);
     analogWrite(PIN::motor1PWM, abs(motor_1_command));
     analogWrite(PIN::motor2PWM, abs(motor_2_command));
     // motor_1->setSpeed(abs(motor_1_command));

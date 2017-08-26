@@ -12,13 +12,21 @@
 #define TICKS_PER_REVOLUTION (12.0f)
 #define TO_OMEGA(ticks) ((ticks) / TICKS_PER_REVOLUTION * 2.0f * M_PI)
 
-#define K_P_1 0.7f
-#define K_I_1 0.4f
-#define K_D_1 0.3f
+#define K_P_1 1.0f
+#define K_I_1 10.0f
+#define K_D_1 0.0f
 
-#define K_P_2 0.7f
+#define K_P_2 2.8f
 #define K_I_2 0.4f
 #define K_D_2 0.3f
+
+// #define K_P_1 2.8f
+// #define K_I_1 0.3f
+// #define K_D_1 0.01f
+
+// #define K_P_2 2.8f
+// #define K_I_2 0.4f
+// #define K_D_2 0.3f
 
 #define MAX_SPEED 250
 #define MIN_SPEED -250

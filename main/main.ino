@@ -20,6 +20,38 @@ float last_motor_1_velocity = 0.0;
 float last_motor_2_velocity = 0.0;
 float motor_1_velocity = 0.0;
 float motor_2_velocity = 0.0;
+float motor_1_acceleration = 0.0;
+float motor_2_acceleration = 0.0;
+#define velocity_window 500
+int velocity_idx = 0;
+float motor_1_velocities[velocity_window];
+float motor_2_velocities[velocity_window];
+#define acceleration_window 50
+int acceleration_idx = 0;
+float motor_1_accelerations[acceleration_window];
+float motor_2_accelerations[acceleration_window];
+
+void fill_array()
+{
+	for(int i=0; i<velocity_window; i++)
+	{
+		motor_1_velocities[i] = 0.0;
+		motor_2_velocities[i] = 0.0;
+	}
+	for(int i=0; i<acceleration_window; i++)
+	{
+		motor_1_accelerations[i] = 0.0;
+		motor_2_accelerations[i] = 0.0;
+	}
+}
+
+float average(float* array, int len)
+{
+  float sum = 0.0;
+  for (int i = 0; i < len; i++)
+    sum += array[i];
+  return  sum/(float)len;
+}
 
 void get_velocity(bool encoder)
 {
@@ -32,6 +64,15 @@ void get_velocity(bool encoder)
 	    // Calculate the current speed.
 	    calcL = TO_OMEGA(gLeftEncoderTicks - last_motor_1) / (deltaT);
 	    calcR = TO_OMEGA(gRightEncoderTicks - last_motor_2) / (deltaT);
+	    motor_1_velocities[velocity_idx] = calcL;
+	    motor_2_velocities[velocity_idx] = calcR;
+	    velocity_idx++;
+	    if(velocity_idx == velocity_window)
+	    {
+	    	velocity_idx = 0;
+	    }
+	    calcL = average(motor_1_velocities,velocity_window);
+	    calcR = average(motor_2_velocities,velocity_window);	    
 	    // 
 	    // Update state variables.
 	    last_motor_1 = gLeftEncoderTicks;
@@ -52,16 +93,26 @@ void get_accleration(bool encoder)
 	    float deltaT = (curTime - last_time_1) / 1000.0;
 	    // 
 	    // Calculate the current speed.
-	    calcL = (motor_1_velocity - last_motor_1_velocity) / (deltaT);
-	    calcR = (motor_2_velocity - last_motor_2_velocity) / (deltaT);
+	    calcL = (robot_data[7] - last_motor_1_velocity) / (deltaT);
+	    calcR = (robot_data[8] - last_motor_2_velocity) / (deltaT);
+	    //
+	    motor_1_accelerations[acceleration_idx] = calcL;
+	    motor_2_accelerations[acceleration_idx] = calcR;
+	    acceleration_idx++;
+	    if(acceleration_idx == acceleration_window)
+	    {
+	    	acceleration_idx = 0;
+	    }
+	    calcL = average(motor_1_accelerations,acceleration_window);
+	    calcR = average(motor_2_accelerations,acceleration_window);
 	    // 
 	    // Update state variables.
-	    last_motor_1_velocity = motor_1_velocity;
-	    last_motor_2_velocity = motor_2_velocity;
+	    last_motor_1_velocity = robot_data[7];
+	    last_motor_2_velocity = robot_data[8];
 	    last_time_1 = curTime;
 	}
-    // robot_data[7] = calcL;
-    // robot_data[8] = calcR;
+    motor_1_acceleration = calcL/10.0;
+    motor_2_acceleration = calcR/10.0;
 }
 
 void send_info(String info)
@@ -73,7 +124,7 @@ void send_info(String info)
 
 void send_data(float data[])
 {
-	Serial.print(1);
+	Serial.print(111);
 	Serial.print(", ");
 	int8_t data_len = 9;
 	for(int8_t i=0; i<data_len-1; i++)
@@ -133,6 +184,7 @@ void jump(int jump_effort)
 
 void setup()
 {
+	fill_array();
 	pinMode(PIN::jumpPin, OUTPUT);
 	pinMode(PIN::motor1PWM,OUTPUT);		
   	pinMode(PIN::motor2PWM,OUTPUT);	
@@ -145,6 +197,20 @@ void setup()
 	bool success;
 	robot_motors.AFMS.begin();
 	Serial.begin(115200);
+
+	bool connected = false;
+	while(!connected)
+	{
+		if(Serial.available()>0)
+		{
+			String data_string = Serial.readString();
+			if(data_string == "start")
+			{
+				connected = true;
+			}
+		}
+	}
+
 	send_info("INFO: Serial started");
 	success = robot_imu.initialize_imu();
 	while(!success)
@@ -187,9 +253,12 @@ void setup()
 void loop()
 {
 	read_data();
+	// delay(100);
 	robot_imu.get_imu_data(robot_data);
-	get_velocity(true);
+	get_accleration(true);
 	jump(commands[0]);
-	robot_motors.run_motors(commands[1], commands[2], robot_data[7], robot_data[8]);
+	robot_motors.run_motors(commands[1], commands[2], motor_1_acceleration, motor_2_acceleration);
+	// robot_motors.run_motors(0.0, commands[2], motor_1_acceleration, motor_2_acceleration);
+	// Serial.println(motor_1_acceleration);
 	send_data(robot_data);
 }
